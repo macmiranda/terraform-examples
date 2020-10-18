@@ -2,3 +2,4 @@
 *.tfstate
 *.backup
 env.ps1
+variables.tf

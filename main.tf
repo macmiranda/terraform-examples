@@ -1,19 +1,19 @@
 data "vsphere_datacenter" "dc" {
-  name = "/EU"
+  name = "EU"
 }
 
 data "vsphere_datastore" "datastore" {
-  name          = "/EU/datastore/rainbow.datastore1"
+  name          = "rainbow.datastore1"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_compute_cluster" "cluster" {
-  name          = "/EU/host/Snk"
+  name          = "Snk"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "network" {
-  name          = "/EU/network/VM intern"
+  name          = "VM intern"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -34,7 +34,7 @@ resource "vsphere_virtual_machine" "vm" {
     // Url to remote ovf/ova file
     remote_ovf_url = "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200923.3.0/x86_64/fedora-coreos-32.20200923.3.0-vmware.x86_64.ova"
     ovf_network_map = {
-      "ESX-port-1" = data.vsphere_network.network.id
+      "VM Network" = data.vsphere_network.network.id
     }
   }
 

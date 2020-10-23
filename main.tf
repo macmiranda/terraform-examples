@@ -1,19 +1,24 @@
 data "vsphere_datacenter" "dc" {
-  name = "EU"
+  name = "Datacenter"
+}
+
+data "vsphere_host" "host" {
+  name          = "172.30.82.9"
+  datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_datastore" "datastore" {
-  name          = "rainbow.datastore1"
+  name          = "ing9.datastore1"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_compute_cluster" "cluster" {
-  name          = "Snk"
+  name          = "Snoke"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 data "vsphere_network" "network" {
-  name          = "VM intern"
+  name          = "VM Network"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
@@ -24,15 +29,20 @@ data "vsphere_network" "network" {
 
 resource "vsphere_virtual_machine" "vm" {
   name             = "terraform-test"
+  datacenter_id = data.vsphere_datacenter.dc.id
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  host_system_id = data.vsphere_host.host.id
   datastore_id     = data.vsphere_datastore.datastore.id
-  num_cpus = 2
-  memory   = 8192
-#   guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
-#   scsi_type = "${data.vsphere_virtual_machine.template.scsi_type}"
+  wait_for_guest_net_timeout = 0
+  wait_for_guest_ip_timeout = 0
+  # num_cpus = 2
+  # memory   = 8192
+  # guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
+  # scsi_type = "${data.vsphere_virtual_machine.template.scsi_type}"
   ovf_deploy {
     // Url to remote ovf/ova file
     remote_ovf_url = "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200923.3.0/x86_64/fedora-coreos-32.20200923.3.0-vmware.x86_64.ova"
+    disk_provisioning = "thin"
     ovf_network_map = {
       "VM Network" = data.vsphere_network.network.id
     }

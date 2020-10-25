@@ -1,3 +1,4 @@
-# Running some tests with terraform
+# Terraform with vSphere
 
-vSphere provider.
+User provider:
+- https://registry.terraform.io/providers/hashicorp/vsphere/latest
